@@ -44,7 +44,7 @@ app.post("/register", async (req, res) => {
 
 })
 // find all
-app.get('/get', async (req, res) => {
+app.get('/users', async (req, res) => {
 
     try {
 
@@ -54,7 +54,7 @@ app.get('/get', async (req, res) => {
 
     } catch (error) {
 
-        res.status(400).send(error);
+        res.status(400).send(error.message);
 
     }
 
@@ -93,9 +93,61 @@ app.post('/login', async (req, res) => {
 
 
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 })
+
+// find by id students data
+app.get('/users/:id',async (req,res)=>{
+    try {
+        const _id = req.params.id;
+        const data = await UserDetails.findById(_id);
+        console.log(data);
+        if(!data){
+            return res.status(404).send("issues");
+
+        }
+        else{
+            res.send(data);
+        }
+        
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+})
+
+// update using id
+app.patch('/users/:id',async(req,res)=>{
+    try {
+
+        const _id = req.params.id;
+        const up = await UserDetails.findByIdAndUpdate(_id,req.body,{
+            new:true
+        });
+      
+        res.send(up);
+    } catch (error) {
+        res.status(400).send("invlaid id");
+    }
+})
+// delete any elements
+app.delete('/users/:id',async(req,res)=>{
+    try {
+        
+        const del = await UserDetails.findByIdAndDelete(req.params.id);
+        if(!del){
+            return res.status(400).send("server error");
+        }
+        else{
+            res.send(`${del.name} deleted successfully`);
+        }
+
+    } catch (error) {
+        res.status(500).send(error);
+    }
+})
+
+
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 })

@@ -31,8 +31,20 @@ const UserSchema = new mongoose.Schema({
         type:String,
         required:true,
         
+    },
+    phone_no:{
+        required:true,
+        type:String,
+
+    },
+    created_on:{
+        // timestam: { type: Date, default: Date.now},
+        type:Date,
+        default:Date.now,
     }
+
 })
 
 const UserDetails = new mongoose.model("UserDetail",UserSchema);
 module.exports=UserDetails;
+console.log("Table is created in db.");
