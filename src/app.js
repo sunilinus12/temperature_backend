@@ -3,11 +3,14 @@ const app = express();
 const port = process.env.PORT || 3000;
 require("./db/conn.js");
 app.use(express.json());
-
+const bycrypt = require("bcryptjs");
+const auth = require("./middleware/verify");
 var jwt = require('jsonwebtoken');
 
 
 const UserDetails = require('./models/User');
+const familyDetails = require('./models/Family_Table');
+const bcrypt = require("bcryptjs/dist/bcrypt");
 
 
 
@@ -21,16 +24,21 @@ app.get("/", (req, res) => {
 
 // creating a user
 app.post("/register", async (req, res) => {
-    // const user = new UserDetails(req.body);
-    // user.save().then(()=>{
-    //     res.send(`hello ${user.name} your data is saved in db`);
-    // }).catch((e)=>{
-    //     res.send("error: is "+e);
-    // })
+
 
     try {
 
-        const user = new UserDetails(req.body);
+        // password hashing
+        const salt =await bcrypt.genSalt(10);
+        const hashpassword = await bcrypt.hash(req.body.password,salt);
+        const user = new UserDetails({
+            name:req.body.name,
+            email:req.body.email,
+            username:req.body.username,
+            password:hashpassword,
+            confirmpassword:hashpassword,
+            phone_no:req.body.phone_no
+        });
 
         const sub_std = await user.save();
         res.status(201).send("data saved");
@@ -61,26 +69,25 @@ app.get('/users', async (req, res) => {
 })
 
 //get login
-app.post('/login', async (req, res) => {
+app.post('/login',auth,async (req, res) => {
     try {
 
         
         const un =  req.body.username;
         const getOne = await UserDetails.findOne({'username':un});
-
+        
         if(getOne){
-            if(getOne.password===req.body.password){
-                res.status(200).send(`${getOne.username} welcome`)
-                console.log("login user is : "+getOne.username)
-
-                const token = await jwt.sign({_id:getOne._id},"mynameisuniljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj",{
-                    expiresIn:"2 seconds"
-                });
+          
+            const validpass= await bcrypt.compare(req.body.password,getOne.password);
+            if(!validpass){
+                res.status(200).send('invalid details');
+            }
+            else{
+                res.send("login user is : "+getOne.username)
+                const token = await jwt.sign({_id:getOne._id},"mynameisuniljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
                 console.log("\nid is :\t"+getOne._id+"\n token is "+token);
-
-                const userverify = await jwt.verify(token,"mynameisuniljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
-                console.log(userverify);
-
+                // res.header('auth-token',token).send(token);
+                // console.log(req.user);
             }
         }
         else{

@@ -1,41 +1,29 @@
 const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
+const FamilySchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
        
     },
-    email: {
+    age: {
 
         type: String,   
-        required: true,
-
-        unique:true,
-        
-       
+        required: true,      
        
     }
-    ,username:{
+    ,gender:{
         type:String,
-        required:true,
-       
-        unique:true,
-        
+        required:true,        
     },
-    password:{
+    weight:{
         type:String,
         required:true,
     },
-    confirmpassword:{
+    photo_src:{
         type:String,
         required:true,
         
-    },
-    phone_no:{
-        required:true,
-        type:String,
-
     },
     created_on:{
         // timestam: { type: Date, default: Date.now},
@@ -45,5 +33,5 @@ const UserSchema = new mongoose.Schema({
 
 })
 
-const UserDetails = new mongoose.model("UserDetail",UserSchema);
-module.exports=UserDetails;
+const familyDetails = new mongoose.model("family_details",FamilySchema);
+module.exports=familyDetails;
