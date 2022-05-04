@@ -18,10 +18,13 @@ const Temperature_Schema = new mongoose.Schema({
     },
     Device_name:{
         type:String,
+    },
+    email:{
+        type:String,
     }
 
 
 })
 
-const temperatureReadings = new mongoose.model("family_details",Temperature_Schema);
+const temperatureReadings = new mongoose.model("temperature_details",Temperature_Schema);
 module.exports=temperatureReadings;

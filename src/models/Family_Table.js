@@ -29,9 +29,12 @@ const FamilySchema = new mongoose.Schema({
         // timestam: { type: Date, default: Date.now},
         type:Date,
         default:Date.now,
+    },
+    email:{
+        type:String
     }
 
 })
 
-const familyDetails = new mongoose.model("family_details",FamilySchema);
+const familyDetails = new mongoose.model("family_detail",FamilySchema);
 module.exports=familyDetails;
